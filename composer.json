@@ -1,0 +1,27 @@
+{
+  "name": "arrilot/google-recaptcha",
+  "license": "MIT",
+  "keywords": [
+    "recaptcha"
+  ],
+  "authors": [
+    {
+      "name": "Nekrasov Ilya",
+      "email": "nekrasov.ilya90@gmail.com"
+    }
+  ],
+  "homepage": "https://github.com/arrilot/google-recaptcha",
+  "require": {
+    "php": ">=5.6.9"
+  },
+  "autoload": {
+    "psr-4": {
+      "Arrilot\\GoogleRecaptcha\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Arrilot\\Tests\\GoogleRecaptcha\\": "tests/"
+    }
+  }
+}
