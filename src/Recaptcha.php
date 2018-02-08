@@ -2,7 +2,6 @@
 
 namespace Arrilot\GoogleRecaptcha;
 
-use Exception;
 use LogicException;
 
 class Recaptcha
@@ -15,12 +14,12 @@ class Recaptcha
     /**
      * @var string
      */
-    protected $publicKey;
+    protected $publicKey = null;
 
     /**
      * @var string
      */
-    protected $secretKey;
+    protected $secretKey = null;
 
     /**
      * @var string
@@ -43,6 +42,11 @@ class Recaptcha
      * @var string
      */
     protected $size = null;
+
+    /**
+     * @var array
+     */
+    protected $errors = [];
     
     private function __construct()
     {
@@ -136,7 +140,17 @@ class Recaptcha
      */
     public function getScript()
     {
-        return '<script src="https://www.google.com/recaptcha/api.js?hl='.$this->language.'"></script>';
+        return '<script src="https://www.google.com/recaptcha/api.js?hl='.$this->language.'" async defer></script>';
+    }
+    
+    /**
+     * Getter for errors.
+     *
+     * @return array
+     */
+    public function getErrors()
+    {
+        return $this->errors;
     }
     
     /**
@@ -150,7 +164,7 @@ class Recaptcha
         $this->ensureSecretKeyIsSet();
 
         if (is_null($response)) {
-            $response = $_POST['g-recaptcha-response'];
+            $response = $_REQUEST['g-recaptcha-response'];
         }
 
         $params = [
@@ -161,10 +175,12 @@ class Recaptcha
 
         $response = file_get_contents('https://www.google.com/recaptcha/api/siteverify?' . http_build_query($params));
         if (empty($response)) {
+            $this->errors = [0 => 'No response from Google'];
             return false;
         }
 
         $json = json_decode($response, true);
+        $this->errors = !empty($json['error-codes']) ? $json['error-codes'] : [];
 
         return !empty($json['success']);
     }
